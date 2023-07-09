@@ -37,7 +37,7 @@
         <flink.version>1.12.2</flink.version>
         <pulsar-flink-connector.version>2.5.5.1</pulsar-flink-connector.version>
         <redis-flink-connector.version>1.0</redis-flink-connector.version>
-        <hudi-flink-version>0.8.1</hudi-flink-version>
+        <hudi-flink-version>0.8.0</hudi-flink-version>
         <log4j.version>2.13.3</log4j.version>
         <fastjson.version>1.2.47</fastjson.version>
         <caseclassGen.version>0.7.1</caseclassGen.version>
