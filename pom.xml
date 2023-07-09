@@ -1,0 +1,471 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>tech.odes</groupId>
+    <artifactId>hudi-flink-starter</artifactId>
+    <version>0.8</version>
+
+    <name>hudi-flink-starter</name>
+    <url>https://github.com/AirToSupply/hudi-flink-starter</url>
+    <description>SFlink Hudi Operation Starter.</description>
+
+    <developers>
+        <developer>
+            <id>AirToSupply</id>
+            <name>Town</name>
+            <email>airtosupply@126.com</email>
+        </developer>
+    </developers>
+
+    <properties>
+        <junit.jupiter.version>5.7.0-M1</junit.jupiter.version>
+        <junit.vintage.version>5.7.0-M1</junit.vintage.version>
+        <junit.platform.version>1.7.0-M1</junit.platform.version>
+        <mockito.jupiter.version>3.3.3</mockito.jupiter.version>
+
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <encoding>UTF-8</encoding>
+        <javac.target>1.8</javac.target>
+        <!--dependency version-->
+        <pulsar.version>2.5.2</pulsar.version>
+        <scala.version>2.11.12</scala.version>
+        <scala.compat.version>2.11</scala.compat.version>
+        <flink.version>1.12.2</flink.version>
+        <pulsar-flink-connector.version>2.5.5.1</pulsar-flink-connector.version>
+        <redis-flink-connector.version>1.0</redis-flink-connector.version>
+        <hudi-flink-version>0.8.1</hudi-flink-version>
+        <log4j.version>2.13.3</log4j.version>
+        <fastjson.version>1.2.47</fastjson.version>
+        <caseclassGen.version>0.7.1</caseclassGen.version>
+        <spring.version>5.2.7.RELEASE</spring.version>
+        <postgresql.version>42.2.18</postgresql.version>
+        <junit.version>4.12</junit.version>
+        <kafka.version>2.0.0</kafka.version>
+        <awaitility.version>3.1.2</awaitility.version>
+        <spark.bundle.hive.scope>provided</spark.bundle.hive.scope>
+        <spark.bundle.hive.shade.prefix/>
+        <utilities.bundle.hive.scope>provided</utilities.bundle.hive.scope>
+        <utilities.bundle.hive.shade.prefix/>
+        <hive.groupid>org.apache.hive</hive.groupid>
+        <hive.version>2.3.1</hive.version>
+        <hive.exec.classifier>core</hive.exec.classifier>
+        <!--plugin version-->
+        <maven-shade-plugin.version>3.1.0</maven-shade-plugin.version>
+    </properties>
+
+    <build>
+        <plugins>
+            <!-- 该插件用于将Scala代码编译成class文件 -->
+            <!--<plugin>
+                <groupId>net.alchim31.maven</groupId>
+                <artifactId>scala-maven-plugin</artifactId>
+                <version>4.4.0</version>
+                <executions>
+                    <execution>
+                        &lt;!&ndash; 声明绑定到maven的compile阶段 &ndash;&gt;
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>3.3.0</version>
+                <configuration>
+                    <appendAssemblyId>false</appendAssemblyId>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                    <archive>
+                        <manifest>
+                            <mainClass>com.hcdsj.connector.table.v3.StreamSqlApplication</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>make-assembly</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.0</version>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                    <encoding>UTF-8</encoding>
+                </configuration>
+            </plugin>
+            <plugin>
+                <!-- Shade all the dependencies to avoid conflicts -->
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>${maven-shade-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <createDependencyReducedPom>true</createDependencyReducedPom>
+                            <promoteTransitiveDependencies>true</promoteTransitiveDependencies>
+                            <minimizeJar>false</minimizeJar>
+
+                            <artifactSet>
+                                <includes>
+                                    <include>io.streamnative.connectors:*</include>
+                                    <!-- more libs to include here -->
+                                </includes>
+                            </artifactSet>
+                            <filters>
+                                <filter>
+                                    <artifact>*:*</artifact>
+                                    <excludes>
+                                        <exclude>META-INF/*.SF</exclude>
+                                        <exclude>META-INF/*.DSA</exclude>
+                                        <exclude>META-INF/*.RSA</exclude>
+                                    </excludes>
+                                </filter>
+                            </filters>
+                            <transformers>
+                                <transformer
+                                        implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
+                                <transformer
+                                        implementation="org.apache.maven.plugins.shade.resource.PluginXmlResourceTransformer"/>
+                            </transformers>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+    <dependencies>
+
+        <dependency>
+            <groupId>org.scala-lang</groupId>
+            <artifactId>scala-library</artifactId>
+            <version>${scala.version}</version>
+        </dependency>
+
+        <!--
+        <dependency>
+            <groupId>io.streamnative.connectors</groupId>
+            <artifactId>pulsar-flink-connector-2.11-1.12</artifactId>
+            <version>2.7.3</version>
+        </dependency>
+        -->
+
+        <!-- https://mvnrepository.com/artifact/org.apache.bahir/flink-connector-redis -->
+        <!--
+        <dependency>
+              <groupId>org.apache.bahir</groupId>
+              <artifactId>flink-connector-redis_${scala.compat.version}</artifactId>
+              <version>${redis-flink-connector.version}</version>
+        </dependency>
+        -->
+
+        <!--<dependency>
+            <groupId>org.apache.flink</groupId>
+            <artifactId>flink-streaming-scala_${scala.compat.version}</artifactId>
+            <version>${flink.version}</version>
+            <scope>provided</scope>
+        </dependency>-->
+        <dependency>
+            <groupId>org.apache.flink</groupId>
+            <artifactId>flink-streaming-java_${scala.compat.version}</artifactId>
+            <version>${flink.version}</version>
+            <!--<scope>provided</scope>-->
+            <exclusions>
+                <exclusion>
+                    <artifactId>kryo</artifactId>
+                    <groupId>com.esotericsoftware.kryo</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>flink-shaded-jackson</artifactId>
+                    <groupId>org.apache.flink</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <!--<dependency>
+            <groupId>org.apache.flink</groupId>
+            <artifactId>flink-table-api-scala-bridge_${scala.compat.version}</artifactId>
+            <version>${flink.version}</version>
+        </dependency>-->
+        <dependency>
+            <groupId>org.apache.flink</groupId>
+            <artifactId>flink-table-api-java-bridge_${scala.compat.version}</artifactId>
+            <version>${flink.version}</version>
+            <!--<scope>provided</scope>-->
+        </dependency>
+        <dependency>
+            <groupId>org.apache.flink</groupId>
+            <artifactId>flink-table-planner-blink_${scala.compat.version}</artifactId>
+            <version>${flink.version}</version>
+            <!--<scope>provided</scope>-->
+        </dependency>
+        <dependency>
+            <groupId>org.apache.flink</groupId>
+            <artifactId>flink-clients_${scala.compat.version}</artifactId>
+            <version>${flink.version}</version>
+            <!--<scope>provided</scope>-->
+            <exclusions>
+                <exclusion>
+                    <artifactId>flink-shaded-jackson</artifactId>
+                    <groupId>org.apache.flink</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.10.1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
+            <version>2.10.1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
+            <version>2.10.1</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.apache.flink</groupId>
+            <artifactId>flink-shaded-jackson</artifactId>
+            <version>2.9.8-7.0</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.apache.flink/flink-avro -->
+        <dependency>
+            <groupId>org.apache.flink</groupId>
+            <artifactId>flink-avro</artifactId>
+            <version>${flink.version}</version>
+            <!--<scope>provided</scope>-->
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.apache.flink/flink-connector-jdbc -->
+        <dependency>
+            <groupId>org.apache.flink</groupId>
+            <artifactId>flink-connector-jdbc_${scala.compat.version}</artifactId>
+            <version>${flink.version}</version>
+            <!--<scope>provided</scope>-->
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <version>${log4j.version}</version>
+        </dependency>
+        <!-- fastJson -->
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <version>${fastjson.version}</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/com.julianpeeters/case-class-generator -->
+        <dependency>
+            <groupId>com.julianpeeters</groupId>
+            <artifactId>case-class-generator_${scala.compat.version}</artifactId>
+            <version>${caseclassGen.version}</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.springframework/spring-context -->
+
+        <!--<dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>${postgresql.version}</version>
+        </dependency>-->
+
+        <dependency>
+            <groupId>org.apache.flink</groupId>
+            <artifactId>flink-hadoop-compatibility_${scala.compat.version}</artifactId>
+            <version>${flink.version}</version>
+            <!--<scope>provided</scope>-->
+        </dependency>
+        <dependency>
+            <groupId>org.apache.flink</groupId>
+            <artifactId>flink-json</artifactId>
+            <version>${flink.version}</version>
+            <!--<scope>provided</scope>-->
+        </dependency>
+        <dependency>
+            <groupId>org.apache.flink</groupId>
+            <artifactId>flink-parquet_${scala.compat.version}</artifactId>
+            <version>${flink.version}</version>
+            <!--<scope>provided</scope>-->
+            <exclusions>
+                <exclusion>
+                    <artifactId>parquet-column</artifactId>
+                    <groupId>org.apache.parquet</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>parquet-hadoop</artifactId>
+                    <groupId>org.apache.parquet</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <!--<dependency>
+            <groupId>org.apache.parquet</groupId>
+            <artifactId>parquet-column</artifactId>
+            <version>1.10.1</version>
+        </dependency>-->
+
+        <!-- https://mvnrepository.com/artifact/org.apache.flink/flink-connector-kafka -->
+        <dependency>
+            <groupId>org.apache.flink</groupId>
+            <artifactId>flink-connector-kafka_2.11</artifactId>
+            <version>${flink.version}</version>
+            <!--<scope>provided</scope>-->
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.apache.kafka/kafka-clients -->
+        <dependency>
+            <groupId>org.apache.kafka</groupId>
+            <artifactId>kafka-clients</artifactId>
+            <version>2.0.0</version>
+        </dependency>
+        <!-- Parquet -->
+        <dependency>
+            <groupId>org.apache.parquet</groupId>
+            <artifactId>parquet-avro</artifactId>
+            <version>1.10.1</version>
+            <!--            <scope>test</scope>-->
+        </dependency>
+        <!-- Avro -->
+        <dependency>
+            <groupId>org.apache.avro</groupId>
+            <artifactId>avro</artifactId>
+            <!-- Override the version to be same with Flink avro -->
+            <version>1.10.0</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <!--  hudi jars      -->
+        <!-- https://mvnrepository.com/artifact/org.apache.hudi/hudi-common -->
+        <dependency>
+            <groupId>org.apache.hudi</groupId>
+            <artifactId>hudi-common</artifactId>
+            <version>${hudi-flink-version}</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>kryo-shaded</artifactId>
+                    <groupId>com.esotericsoftware</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <!--<dependency>
+            <groupId>org.apache.hudi</groupId>
+            <artifactId>hudi-cli</artifactId>
+            <version>0.8.0</version>
+        </dependency>-->
+
+        <dependency>
+            <groupId>org.apache.hudi</groupId>
+            <artifactId>hudi-flink_${scala.compat.version}</artifactId>
+            <version>${hudi-flink-version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.hudi</groupId>
+            <artifactId>hudi-client-common</artifactId>
+            <version>${hudi-flink-version}</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>metrics-graphite</artifactId>
+                    <groupId>io.dropwizard.metrics</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.hudi</groupId>
+            <artifactId>hudi-flink-client</artifactId>
+            <version>${hudi-flink-version}</version>
+        </dependency>
+        <!--        <dependency>
+                    <groupId>org.apache.hudi</groupId>
+                    <artifactId>hudi-hadoop-mr</artifactId>
+                    <version>${hudi-flink-version}</version>
+                </dependency>-->
+        <dependency>
+            <groupId>org.awaitility</groupId>
+            <artifactId>awaitility</artifactId>
+            <version>${awaitility.version}</version>
+            <!--            <scope>test</scope>-->
+        </dependency>
+
+        <dependency>
+            <groupId>com.twitter</groupId>
+            <artifactId>bijection-avro_${scala.compat.version}</artifactId>
+            <version>0.9.7</version>
+        </dependency>
+
+        <dependency>
+            <!--Used to test execution in task executor after de-serializing-->
+            <groupId>com.esotericsoftware</groupId>
+            <artifactId>kryo</artifactId>
+            <version>4.0.0</version>
+            <!--            <scope>test</scope>-->
+        </dependency>
+
+        <!-- Hive -->
+        <dependency>
+            <groupId>${hive.groupid}</groupId>
+            <artifactId>hive-exec</artifactId>
+            <version>${hive.version}</version>
+            <!--<scope>provided</scope>-->
+            <classifier>${hive.exec.classifier}</classifier>
+            <exclusions>
+                <exclusion>
+                    <groupId>javax.mail</groupId>
+                    <artifactId>mail</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.eclipse.jetty.aggregate</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>calcite-core</artifactId>
+                    <groupId>org.apache.calcite</groupId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.parquet</groupId>
+                    <artifactId>parquet-hadoop-bundle</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.pentaho</groupId>
+            <artifactId>pentaho-aggdesigner-algorithm</artifactId>
+            <version>5.1.5-jhyde</version>
+        </dependency>
+
+        <!-- yaml读取 -->
+        <dependency>
+            <groupId>org.yaml</groupId>
+            <artifactId>snakeyaml</artifactId>
+            <version>1.17</version>
+        </dependency>
+    </dependencies>
+
+</project>
