@@ -1,6 +1,6 @@
-package tech.odes.hudi.flink.starter.common.schema;
+package tech.odes.hudi.hudi.starter.common.schema;
 
-import tech.odes.hudi.flink.starter.common.config.HoodieTableConnector;
+import tech.odes.hudi.hudi.starter.common.config.HoodieTableConnector;
 import org.apache.flink.table.api.TableEnvironment;
 import org.apache.flink.table.api.TableSchema;
 import org.slf4j.Logger;

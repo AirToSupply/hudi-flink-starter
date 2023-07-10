@@ -1,19 +1,19 @@
-package tech.odes.hudi.flink.starter.application.programe;
+package tech.odes.hudi.hudi.starter.application.programe;
 
-import tech.odes.hudi.flink.starter.common.config.ApplicationConfig;
-import tech.odes.hudi.flink.starter.common.env.ExectionContextFactory;
+import tech.odes.hudi.hudi.starter.common.config.ApplicationConfig;
+import tech.odes.hudi.hudi.starter.common.env.ExectionContextFactory;
 import org.apache.flink.streaming.api.CheckpointingMode;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.table.api.bridge.java.StreamTableEnvironment;
-import tech.odes.hudi.flink.starter.common.env.ExecMode;
-import tech.odes.hudi.flink.starter.common.env.StreamContext;
-import tech.odes.hudi.flink.starter.common.service.ProceessRunner;
+import tech.odes.hudi.hudi.starter.common.env.ExecMode;
+import tech.odes.hudi.hudi.starter.common.env.StreamContext;
+import tech.odes.hudi.hudi.starter.common.service.ProceessRunner;
 import org.yaml.snakeyaml.Yaml;
 
 /**
  * streaming operate hudi skeleton with Flink SQL
  */
-public class StreamingProcessApplication {
+public class StreamingProcessApplicationSuite {
 
     private static final String CONFIG_FILE_NAME = "transform-streaming.yaml";
 
@@ -30,7 +30,7 @@ public class StreamingProcessApplication {
 
         StreamTableEnvironment tableEnv = exectionContext.getStreamTableEnvironment();
 
-        ApplicationConfig applicationConfig = new Yaml().loadAs(StreamingProcessApplication.class.getClassLoader()
+        ApplicationConfig applicationConfig = new Yaml().loadAs(StreamingProcessApplicationSuite.class.getClassLoader()
                 .getResourceAsStream(CONFIG_FILE_NAME), ApplicationConfig.class);
 
         ProceessRunner.run(tableEnv, applicationConfig);

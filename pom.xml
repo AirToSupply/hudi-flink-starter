@@ -6,7 +6,7 @@
 
     <groupId>tech.odes</groupId>
     <artifactId>hudi-flink-starter</artifactId>
-    <version>0.9</version>
+    <version>0.11</version>
 
     <name>hudi-flink-starter</name>
     <url>https://github.com/AirToSupply/hudi-flink-starter</url>
@@ -29,11 +29,12 @@
         <pulsar.version>2.5.2</pulsar.version>
         <scala.version>2.12.10</scala.version>
         <scala.compat.version>2.12</scala.compat.version>
-        <flink.version>1.12.2</flink.version>
+        <flink.binary.version>1.13</flink.binary.version>
+        <flink.version>1.13.1</flink.version>
         <pulsar-flink-connector.version>2.5.5.1</pulsar-flink-connector.version>
         <redis-flink-connector.version>1.0</redis-flink-connector.version>
-        <hudi-flink-version>0.9.0-SNAPSHOT</hudi-flink-version>
-        <log4j.version>2.13.3</log4j.version>
+        <hudi-flink-version>0.11.1</hudi-flink-version>
+        <log4j.version>2.15.0</log4j.version>
         <fastjson.version>1.2.47</fastjson.version>
         <caseclassGen.version>0.7.1</caseclassGen.version>
         <spring.version>5.2.7.RELEASE</spring.version>
@@ -129,7 +130,6 @@
     </build>
 
     <dependencies>
-
         <!-- scala -->
         <dependency>
             <groupId>org.scala-lang</groupId>
@@ -351,7 +351,7 @@
 
         <dependency>
             <groupId>org.apache.hudi</groupId>
-            <artifactId>hudi-flink-bundle_${scala.compat.version}</artifactId>
+            <artifactId>hudi-flink${flink.binary.version}-bundle_${scala.compat.version}</artifactId>
             <version>${hudi-flink-version}</version>
         </dependency>
         <!-- hudi-flink -->
@@ -498,8 +498,19 @@
         <!-- log -->
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+            <version>${log4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-core</artifactId>
             <version>${log4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-slf4j-impl</artifactId>
+            <version>${log4j.version}</version>
+            <scope>compile</scope>
         </dependency>
         <!-- log -->
 

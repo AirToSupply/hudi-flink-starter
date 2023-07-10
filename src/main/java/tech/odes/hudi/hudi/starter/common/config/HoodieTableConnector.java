@@ -1,4 +1,4 @@
-package tech.odes.hudi.flink.starter.common.config;
+package tech.odes.hudi.hudi.starter.common.config;
 
 import org.apache.flink.configuration.Configuration;
 

@@ -1,6 +1,6 @@
-package tech.odes.hudi.flink.starter.common.config;
+package tech.odes.hudi.hudi.starter.common.config;
 
-import tech.odes.hudi.flink.starter.common.schema.HoodieTableSchemaHelper;
+import tech.odes.hudi.hudi.starter.common.schema.HoodieTableSchemaHelper;
 import lombok.Builder;
 import lombok.experimental.Tolerate;
 import org.apache.flink.configuration.Configuration;

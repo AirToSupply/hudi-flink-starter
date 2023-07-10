@@ -1,18 +1,19 @@
 source:
-  basePath: hdfs://172.16.2.120:9000/
+  basePath: /hudi/rdbms/default
   table:
-    - targetPath: /hudi/flink/t1/
-      name: t1
+    - targetPath: /etc_project/ods_etc_project_activity_manage/clean_tb
+      name: activity_manage
       conf:
-        hoodie.datasource.write.partitionpath.field: partition
+        hoodie.datasource.write.recordkey.field: id,
+        write.precombine.field: id
 sink:
-  basePath: hdfs://172.16.2.120:9000/
+  basePath: /hudi/flink
   table:
-    - targetPath: /hudi/flink/t2/
-      name: t2
+    - targetPath: /activity_manage
+      name: activity_manage_sync
       initTableIfNotExists: true
       conf:
-        hoodie.datasource.write.partitionpath.field: partition
+        write.precombine.field: id
+        hoodie.datasource.write.recordkey.field: id
 transform: |-
-  create view tp as select * from t1;
-  insert into t2 select * from t1 where `partition` in ('par1', 'par3');
+  insert into activity_manage_sync select * from activity_manage;
