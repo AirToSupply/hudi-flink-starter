@@ -1,12 +1,12 @@
-package tech.odes.hudi.flink.starter.common.config;
+package tech.odes.hudi.hudi.starter.common.config;
 
 import java.util.List;
 import java.util.Objects;
 
-public class Source {
+public class Sink {
     private String basePath;
 
-    private List<SourceTable> table;
+    private List<SinkTable> table;
 
     public String getBasePath() {
         return basePath;
@@ -16,16 +16,16 @@ public class Source {
         this.basePath = basePath;
     }
 
-    public List<SourceTable> getTable() {
+    public List<SinkTable> getTable() {
         return table;
     }
 
-    public void setTable(List<SourceTable> table) {
+    public void setTable(List<SinkTable> table) {
         this.table = table;
         table.stream().forEach(t -> checkBasePath(t));
     }
 
-    private void checkBasePath(SourceTable sinkTable) {
+    private void checkBasePath(SinkTable sinkTable) {
         if (Objects.isNull(sinkTable.getBasePath())) {
             sinkTable.setBasePath(this.getBasePath());
         }

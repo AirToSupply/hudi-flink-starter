@@ -1,10 +1,10 @@
-package tech.odes.hudi.flink.starter.common.service;
+package tech.odes.hudi.hudi.starter.common.service;
 
-import tech.odes.hudi.flink.starter.common.config.ApplicationConfig;
-import tech.odes.hudi.flink.starter.common.config.SourceTable;
-import tech.odes.hudi.flink.starter.common.parser.FlinkSqlParser;
-import tech.odes.hudi.flink.starter.common.schema.HoodieTableCodeGenerator;
-import tech.odes.hudi.flink.starter.common.schema.HoodieTableSchemaHelper;
+import tech.odes.hudi.hudi.starter.common.config.ApplicationConfig;
+import tech.odes.hudi.hudi.starter.common.config.SourceTable;
+import tech.odes.hudi.hudi.starter.common.parser.FlinkSqlParser;
+import tech.odes.hudi.hudi.starter.common.schema.HoodieTableCodeGenerator;
+import tech.odes.hudi.hudi.starter.common.schema.HoodieTableSchemaHelper;
 import org.apache.calcite.sql.SqlNode;
 import org.apache.calcite.sql.SqlSelect;
 import org.apache.commons.lang3.StringUtils;
@@ -14,7 +14,7 @@ import org.apache.flink.table.api.Table;
 import org.apache.flink.table.api.TableEnvironment;
 import org.apache.flink.table.api.TableSchema;
 import org.apache.hudi.configuration.FlinkOptions;
-import tech.odes.hudi.flink.starter.common.config.SinkTable;
+import tech.odes.hudi.hudi.starter.common.config.SinkTable;
 import org.apache.hudi.util.AvroSchemaConverter;
 import org.apache.hudi.util.StreamerUtil;
 import org.slf4j.Logger;
@@ -56,7 +56,7 @@ public class ProceessRunner {
         if (sinkTable.isInitTableIfNotExists()) {
             String avroSchema = AvroSchemaConverter.convertToSchema(
                     sinkTableSchema.toRowDataType().notNull().getLogicalType()).toString();
-            conf.setString(FlinkOptions.READ_AVRO_SCHEMA, avroSchema);
+            conf.setString(FlinkOptions.SOURCE_AVRO_SCHEMA, avroSchema);
 
             try {
                 StreamerUtil.initTableIfNotExists(conf);

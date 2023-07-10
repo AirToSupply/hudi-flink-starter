@@ -1,4 +1,4 @@
-package tech.odes.hudi.flink.starter.common.config;
+package tech.odes.hudi.hudi.starter.common.config;
 
 public class ApplicationConfig {
     private Source source;

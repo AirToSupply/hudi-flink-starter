@@ -1,4 +1,4 @@
-package tech.odes.hudi.flink.starter.common.parser;
+package tech.odes.hudi.hudi.starter.common.parser;
 
 import org.apache.calcite.avatica.util.Casing;
 import org.apache.calcite.avatica.util.Quoting;

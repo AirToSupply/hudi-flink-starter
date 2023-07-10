@@ -1,4 +1,4 @@
-package tech.odes.hudi.flink.starter.common.env;
+package tech.odes.hudi.hudi.starter.common.env;
 
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.table.api.bridge.java.StreamTableEnvironment;

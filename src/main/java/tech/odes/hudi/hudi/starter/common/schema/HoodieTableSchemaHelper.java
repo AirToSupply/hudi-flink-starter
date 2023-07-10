@@ -1,4 +1,4 @@
-package tech.odes.hudi.flink.starter.common.schema;
+package tech.odes.hudi.hudi.starter.common.schema;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.flink.api.java.tuple.Tuple2;
@@ -9,9 +9,8 @@ import org.apache.hadoop.fs.Path;
 import org.apache.hudi.common.table.HoodieTableMetaClient;
 import org.apache.hudi.common.table.TableSchemaResolver;
 import org.apache.hudi.exception.TableNotFoundException;
-// import org.apache.avro.Schema;
+// import org.apache.hudi.util.AvroSchemaConverter;
 import org.apache.hudi.org.apache.avro.Schema;
-import org.apache.hudi.util.AvroSchemaConverter;
 import org.apache.hudi.util.StreamerUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -100,5 +99,4 @@ public class HoodieTableSchemaHelper {
         }
         return schema;
     }
-
 }
