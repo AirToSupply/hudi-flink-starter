@@ -1,0 +1,18 @@
+source:
+  basePath: hdfs://172.16.2.120:9000/
+  table:
+    - targetPath: /hudi/flink/t1/
+      name: t1
+      conf:
+        hoodie.datasource.write.partitionpath.field: partition
+sink:
+  basePath: hdfs://172.16.2.120:9000/
+  table:
+    - targetPath: /hudi/flink/t2/
+      name: t2
+      initTableIfNotExists: true
+      conf:
+        hoodie.datasource.write.partitionpath.field: partition
+transform: |-
+  create view tp as select * from t1;
+  insert into t2 select * from t1 where `partition` in ('par1', 'par3');

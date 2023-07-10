@@ -1,0 +1,24 @@
+source:
+  basePath: hdfs://172.16.2.120:9000/
+  table:
+    - targetPath: /hudi/flink/streaming_source_table/
+      name: streaming_source_table
+      conf:
+        table.type: MERGE_ON_READ
+        read.streaming.enabled: true
+        read.streaming.check-interval: 180
+        hoodie.datasource.write.partitionpath.field: partition
+        hoodie.datasource.write.recordkey.field: uuid
+sink:
+  basePath: hdfs://172.16.2.120:9000/
+  table:
+    - targetPath: /hudi/flink/streaming_sink_table/
+      name: streaming_sink_table
+      initTableIfNotExists: true
+      conf:
+        table.type: MERGE_ON_READ
+        read.streaming.enabled: true
+        hoodie.datasource.write.partitionpath.field: partition
+        hoodie.datasource.write.recordkey.field: uuid
+transform: |-
+  insert into streaming_sink_table select uuid, name, age, ts, `partition` from streaming_source_table where `partition`='par4';
